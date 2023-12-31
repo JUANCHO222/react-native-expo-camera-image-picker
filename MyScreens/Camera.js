@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
+
 export default function App() {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -11,7 +12,6 @@ export default function App() {
   const [secondImage, setSecondImage] = useState(null);
 
   const [isCameraActive, setIsCameraActive] = useState(false);
-  const [isCameraActive2, setIsCameraActive2] = useState(false);
   const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.off);
   const cameraRef = useRef(null);
 
@@ -47,7 +47,8 @@ export default function App() {
       try {
         const { uri } = await cameraRef.current.takePictureAsync();
         setSecondImage(uri);
-        setIsCameraActive2(false);
+        setIsCameraActive(false);
+        saveImage(uri);
       } catch (error) {
         console.error(error);
       }
@@ -79,26 +80,8 @@ export default function App() {
     }
   };
 
-  const pickImageFromGallery2 = async () => {
-    if (hasGalleryPermission) {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-
-      if (!result.cancelled) {
-        setSecondImage(result.uri); // si no se cancela la imagen toma esta referencia
-      }
-    }
-  };
-
   const toggleCamera = () => {
     setIsCameraActive(!isCameraActive);
-  };
-  const toggleCamera2 = () => {
-    setIsCameraActive2(!isCameraActive2);
   };
 
 
@@ -126,7 +109,6 @@ export default function App() {
     <View style={styles.container}>
       {!isCameraActive ? (
         <View style={styles.buttonContainer}>
-
           <TouchableOpacity
             style={styles.button}
             onPress={toggleCamera}
@@ -134,10 +116,7 @@ export default function App() {
           >
             <Text style={styles.buttonText}>Abrir Cámara</Text>
           </TouchableOpacity>
-          
-          
         </View>
-
       ) : (
         <View style={styles.cameraContainer}>
           <Camera
@@ -157,50 +136,12 @@ export default function App() {
             <TouchableOpacity style={styles.cameraButton} onPress={takePicture}>
               <Text style={styles.buttonText}>Tomar Foto</Text>
             </TouchableOpacity>
-            
-          </View>
-        </View>
-      )}
-
-{!isCameraActive2 ? (
-        <View style={styles.buttonContainer}>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={toggleCamera2}
-            disabled={!hasCameraPermission}
-          >
-            <Text style={styles.buttonText}>Abrir Cámara 2</Text>
-          </TouchableOpacity>
-          
-          
-        </View>
-
-      ) : (
-        <View style={styles.cameraContainer}>
-          <Camera
-            style={styles.camera}
-            type={type}
-            flashMode={flashMode}
-            ref={cameraRef}
-          />
-          <View style={styles.cameraButtons}>
-            <TouchableOpacity style={styles.cameraButton} onPress={switchFlashMode}>
-              <Text style={styles.buttonText}>
-                {flashMode === Camera.Constants.FlashMode.on
-                  ? 'Flash: ON'
-                  : 'Flash: OFF'}
-              </Text>
-            </TouchableOpacity>
             <TouchableOpacity style={styles.cameraButton} onPress={takeSecondPicture}>
-              <Text style={styles.buttonText}>Tomar Foto</Text>
+              <Text style={styles.buttonText}>Tomar Segunda Foto</Text>
             </TouchableOpacity>
-            
           </View>
         </View>
       )}
-
-
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -208,13 +149,6 @@ export default function App() {
           disabled={!hasGalleryPermission}
         >
           <Text style={styles.buttonText}>Abrir Galería</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={pickImageFromGallery2}
-          disabled={!hasGalleryPermission}
-        >
-          <Text style={styles.buttonText}>Abrir Galería2</Text>
         </TouchableOpacity>
       </View>
       
@@ -229,7 +163,6 @@ export default function App() {
     <View style={styles.imageWrapper}>
       <Text style={styles.imageLabel}>Segunda Foto</Text>
       <Image source={{ uri: secondImage }} style={styles.image} />
-      
     </View>
   )}
 </View>
@@ -241,7 +174,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   buttonContainer: {
