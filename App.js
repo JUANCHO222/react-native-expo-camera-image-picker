@@ -48,6 +48,7 @@ export default function App() {
         const { uri } = await cameraRef.current.takePictureAsync();
         setSecondImage(uri);
         setIsCameraActive2(false);
+        saveImage(uri); //Guardado automatico de la imagen en la galeria
       } catch (error) {
         console.error(error);
       }
