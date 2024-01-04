@@ -58,15 +58,17 @@ export default function Analisis() {
     }
   };
 
+  // Eventos para borrar la vista previa de la imagen
   const handleDeleteImage = () => {
-    setShowImage(false);
+    setShowImage(true); // Establece el estado para mostrar la imagen
     setImage(null); // Limpia la referencia de la imagen
   };
   
   const handleDeleteSecondImage = () => {
-    setShowSecondImage(false);
+    setShowSecondImage(true); // Establece el estado para mostrar la segunda imagen
     setSecondImage(null); // Limpia la referencia de la segunda imagen
   };
+  
   
 
   const toggleCamera = () => {
@@ -232,9 +234,10 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: 200,
     height: 200,
-    borderWidth: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+    borderRadius: 45
   },
   image: {
     width: 150,
