@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
-export default function Analisis() {
+
+
+export default function Analisis({navigation, route}) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [image, setImage] = useState(null);
@@ -25,6 +27,22 @@ export default function Analisis() {
       setHasGalleryPermission(galleryStatus.status === 'granted');
     })();
   }, []);
+
+  useEffect(() => {
+    // Verificar si se recibió la imagen a través de las props de navegación
+    if (route.params?.image) {
+      setImage(route.params.image);
+      setShowImage(true); // Puedes ajustar esto según tus necesidades
+    }
+  }, [route.params?.image]);
+
+  useEffect(() => {
+    // Verificar si se recibió la imagen a través de las props de navegación
+    if (route.params?.secondImage) {
+      setSecondImage(route.params.secondImage);
+      setShowSecondImage(true); // Puedes ajustar esto según tus necesidades
+    }
+  }, [route.params?.secondImage]);
   
   // Evento para tomar la foto de la galeria
   const pickImageFromGallery = async () => {
@@ -66,10 +84,10 @@ export default function Analisis() {
   
   const handleDeleteSecondImage = () => {
     setShowSecondImage(true); // Establece el estado para mostrar la segunda imagen
-    setSecondImage(null); // Limpia la referencia de la segunda imagen
+    setSecondImage(null); // Limpia la referencia de la segunda imagen  
   };
   
-  
+
 
   const toggleCamera = () => {
     setIsCameraActive(!isCameraActive);
@@ -88,11 +106,11 @@ export default function Analisis() {
         <View style={styles.imageContainer}>
 
         {showImage && image && (
-          <View style={styles.imageWrapper}>
-            <Text style={styles.imageLabel}>Primera Foto</Text>
-            <Image source={{ uri: image }} style={styles.image} />
-          </View>
-        )}
+            <View style={styles.imageWrapper}>
+              <Text style={styles.imageLabel}>Primera Foto</Text>
+              <Image source={{ uri: image }} style={styles.image} />
+            </View>
+          )}
 
         </View>
 
@@ -100,8 +118,9 @@ export default function Analisis() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={null}
+            onPress={() => { navigation.navigate('Camara'); }}       
           >
+
             <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>
 
@@ -141,7 +160,7 @@ export default function Analisis() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={null}
+            onPress={() => { navigation.navigate('CamaraS'); }}
           >
             <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>

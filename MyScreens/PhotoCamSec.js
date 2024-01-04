@@ -4,9 +4,9 @@ import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Button from '../src/components/Button';
 
-export default function PhotoCam({navigation}) {
+export default function PhotoCamSec({navigation}) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const [image, setImage] = useState(null);
+  const [secondImage, setSecondImage] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   const cameraRef = useRef(null)
@@ -24,7 +24,7 @@ export default function PhotoCam({navigation}) {
       try{
         const data = await cameraRef.current.takePictureAsync();
         console.log(data);
-        setImage(data.uri);
+        setSecondImage(data.uri);
       } catch(e) {
         console.log(e);
       }
@@ -32,11 +32,11 @@ export default function PhotoCam({navigation}) {
   }
 
   const saveImage = async () => {
-    if (image) {
+    if (secondImage) {
       try {
-        await MediaLibrary.createAssetAsync(image);
+        await MediaLibrary.createAssetAsync(secondImage);
         alert('Picture saved!');
-        navigation.navigate('Home', { image }); // Pasar la imagen al componente Analisis
+        navigation.navigate('Home', { secondImage }); // Pasar la imagen al componente Analisis  
       } catch (e) {
         console.log(e);
       }
@@ -48,7 +48,7 @@ export default function PhotoCam({navigation}) {
   }
   return (
     <View style={styles.container}>
-      {!image ?
+      {!secondImage ?
       <Camera 
       style={styles.camera}
       type={type}
@@ -73,10 +73,10 @@ export default function PhotoCam({navigation}) {
         </View>
       </Camera>
       :
-      <Image source={{uri: image}} style={styles.camera}/>
+      <Image source={{uri: secondImage}} style={styles.camera}/>
 }
       <View>
-        {image ?
+        {secondImage ?
         <View style={{
           flexDirection: 'row',
           justifyContent:'space-between',
