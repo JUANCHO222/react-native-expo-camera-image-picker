@@ -8,7 +8,8 @@ export default function Analisis() {
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [secondImage, setSecondImage] = useState(null);
-
+  const [showImage, setShowImage] = useState(true);
+  const [showSecondImage, setShowSecondImage] = useState(true);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isCameraActive2, setIsCameraActive2] = useState(false);
   const cameraRef = useRef(null);
@@ -57,6 +58,17 @@ export default function Analisis() {
     }
   };
 
+  const handleDeleteImage = () => {
+    setShowImage(false);
+    setImage(null); // Limpia la referencia de la imagen
+  };
+  
+  const handleDeleteSecondImage = () => {
+    setShowSecondImage(false);
+    setSecondImage(null); // Limpia la referencia de la segunda imagen
+  };
+  
+
   const toggleCamera = () => {
     setIsCameraActive(!isCameraActive);
   };
@@ -73,12 +85,12 @@ export default function Analisis() {
 
         <View style={styles.imageContainer}>
 
-          {image && (
-            <View style={styles.imageWrapper}>
-              <Text style={styles.imageLabel}>Primera Foto</Text>
-              <Image source={{ uri: image }} style={styles.image} />
-            </View>
-          )}
+        {showImage && image && (
+          <View style={styles.imageWrapper}>
+            <Text style={styles.imageLabel}>Primera Foto</Text>
+            <Image source={{ uri: image }} style={styles.image} />
+          </View>
+        )}
 
         </View>
 
@@ -98,6 +110,14 @@ export default function Analisis() {
           >
             <Text style={styles.buttonText}>Abrir camara</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleDeleteImage}
+            disabled={!showImage}
+          >
+            <Text style={styles.buttonText}>Borrar Imagen</Text>
+          </TouchableOpacity>
         </View>
 
       </View>
@@ -106,12 +126,12 @@ export default function Analisis() {
       <View style={styles.containerRight}>
 
         <View style={styles.imageContainer}>
-          {secondImage && (
-            <View style={styles.imageWrapper}>
-              <Text style={styles.imageLabel}>Segunda Foto</Text>
-              <Image source={{ uri: secondImage }} style={styles.image} />
-            </View>  
-          )}
+        {showSecondImage && secondImage && (
+          <View style={styles.imageWrapper}>
+            <Text style={styles.imageLabel}>Segunda Foto</Text>
+            <Image source={{ uri: secondImage }} style={styles.image} />
+          </View>
+        )}
         </View>
         
 
@@ -130,6 +150,14 @@ export default function Analisis() {
             onPress={null}
           >
             <Text style={styles.buttonText}>Abrir camara</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleDeleteSecondImage}
+            disabled={!showSecondImage}
+          >
+            <Text style={styles.buttonText}>Borrar Imagen</Text>
           </TouchableOpacity>
         </View>
 
