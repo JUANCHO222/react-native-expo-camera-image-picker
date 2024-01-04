@@ -100,17 +100,17 @@ export default function Analisis() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={pickImageFromGallery}
-            disabled={!hasGalleryPermission}
+            onPress={null}
           >
-            <Text style={styles.buttonText}>Abrir Galería</Text>
+            <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
-            onPress={null}
+            onPress={pickImageFromGallery}
+            disabled={!hasGalleryPermission}
           >
-            <Text style={styles.buttonText}>Abrir camara</Text>
+            <Text style={styles.buttonText}>Abrir Galería</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -141,17 +141,17 @@ export default function Analisis() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={pickImageFromGallery2}
-            disabled={!hasGalleryPermission}
+            onPress={null}
           >
-            <Text style={styles.buttonText}>Abrir Galería</Text>
+            <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
-            onPress={null}
+            onPress={pickImageFromGallery2}
+            disabled={!hasGalleryPermission}
           >
-            <Text style={styles.buttonText}>Abrir camara</Text>
+            <Text style={styles.buttonText}>Abrir Galería</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -161,6 +161,7 @@ export default function Analisis() {
           >
             <Text style={styles.buttonText}>Borrar Imagen</Text>
           </TouchableOpacity>
+          
         </View>
 
       </View>
