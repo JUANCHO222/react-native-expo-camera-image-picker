@@ -54,6 +54,7 @@ export default function Analisis({navigation, route}) {
       });
 
       if (!result.cancelled) {
+        console.log(result);
         setImage(result.uri); // si no se cancela la imagen toma esta referencia
       }
     }
