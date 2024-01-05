@@ -4,7 +4,6 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 
-
 export default function Analisis({navigation, route}) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
@@ -118,7 +117,7 @@ export default function Analisis({navigation, route}) {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => { navigation.navigate('Camara'); }}       
+            onPress={() => {navigation.jumpTo('Camara');}}       
           >
 
             <Text style={styles.buttonText}>Tomar Foto</Text>
@@ -160,7 +159,7 @@ export default function Analisis({navigation, route}) {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => { navigation.navigate('CamaraS'); }}
+            onPress={() => {navigation.jumpTo('CamaraS');}}
           >
             <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>
