@@ -82,7 +82,7 @@ export default function PhotoCamSec({navigation}) {
           justifyContent:'space-between',
           paddingHorizontal: 50
         }}>
-          <Button title={"Re-take"} icon="retweet" onPress={() => setImage(null)}/>
+          <Button title={"Re-take"} icon="retweet" onPress={() => setSecondImage(null)}/>
           <Button title={"Save"} icon="check" onPress={saveImage}/>
         </View>
         :

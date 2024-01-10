@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
+import axios from 'axios'; // Importa la librería axios
 
-export default function Analisis({navigation, route}) {
+export default function Analisis({ navigation, route }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [image, setImage] = useState(null);
@@ -15,8 +16,6 @@ export default function Analisis({navigation, route}) {
   const [isCameraActive2, setIsCameraActive2] = useState(false);
   const cameraRef = useRef(null);
 
-
-  // Permisos para el acceso a la camara y galeria
   useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestPermissionsAsync();
@@ -28,22 +27,19 @@ export default function Analisis({navigation, route}) {
   }, []);
 
   useEffect(() => {
-    // Verificar si se recibió la imagen a través de las props de navegación
     if (route.params?.image) {
       setImage(route.params.image);
-      setShowImage(true); // Puedes ajustar esto según tus necesidades
+      setShowImage(true);
     }
   }, [route.params?.image]);
 
   useEffect(() => {
-    // Verificar si se recibió la imagen a través de las props de navegación
     if (route.params?.secondImage) {
       setSecondImage(route.params.secondImage);
-      setShowSecondImage(true); // Puedes ajustar esto según tus necesidades
+      setShowSecondImage(true);
     }
   }, [route.params?.secondImage]);
-  
-  // Evento para tomar la foto de la galeria
+
   const pickImageFromGallery = async () => {
     if (hasGalleryPermission) {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -54,12 +50,10 @@ export default function Analisis({navigation, route}) {
       });
 
       if (!result.cancelled) {
-        console.log(result);
-        setImage(result.uri); // si no se cancela la imagen toma esta referencia
+        setImage(result.uri);
       }
     }
   };
-
 
   const pickImageFromGallery2 = async () => {
     if (hasGalleryPermission) {
@@ -71,56 +65,108 @@ export default function Analisis({navigation, route}) {
       });
 
       if (!result.cancelled) {
-        setSecondImage(result.uri); // si no se cancela la imagen toma esta referencia
+        setSecondImage(result.uri);
       }
     }
   };
 
-  // Eventos para borrar la vista previa de la imagen
   const handleDeleteImage = () => {
-    setShowImage(true); // Establece el estado para mostrar la imagen
-    setImage(null); // Limpia la referencia de la imagen
+    setShowImage(true);
+    setImage(null);
   };
-  
-  const handleDeleteSecondImage = () => {
-    setShowSecondImage(true); // Establece el estado para mostrar la segunda imagen
-    setSecondImage(null); // Limpia la referencia de la segunda imagen  
-  };
-  
 
+  const handleDeleteSecondImage = () => {
+    setShowSecondImage(true);
+    setSecondImage(null);
+  };
 
   const toggleCamera = () => {
     setIsCameraActive(!isCameraActive);
   };
+
   const toggleCamera2 = () => {
     setIsCameraActive2(!isCameraActive2);
   };
 
-
+  const handleGuardarYAnalizar = async () => {
+    try {
+      if (image && secondImage) {
+        const formData1 = new FormData();
+        formData1.append('file', {
+          uri: image,
+          type: 'image/jpeg',
+          name: 'firstImage.jpg',
+        });
+  
+        const formData2 = new FormData();
+        formData2.append('file', {
+          uri: secondImage,
+          type: 'image/jpeg',
+          name: 'secondImage.jpg',
+        });
+  
+        // Hacer la primera solicitud
+        const response1 = await fetch('http://195.35.8.243/predict', {
+          method: 'POST',
+          body: formData1,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        // Hacer la segunda solicitud
+        const response2 = await fetch('http://195.35.8.243/predict', {
+          method: 'POST',
+          body: formData2,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+  
+        // Verificar si las solicitudes fueron exitosas (código de estado 2xx)
+        if (response1.ok) {
+          const responseData1 = await response1.json();
+          console.log('Respuesta de la API (Primera imagen):', responseData1);
+        } else {
+          console.error('Error en la primera solicitud. Código de estado:', response1.status);
+        }
+  
+        if (response2.ok) {
+          const responseData2 = await response2.json();
+          console.log('Respuesta de la API (Segunda imagen):', responseData2);
+        } else {
+          console.error('Error en la segunda solicitud. Código de estado:', response2.status);
+        }
+  
+        // Puedes realizar acciones adicionales aquí según la respuesta de la API
+      } else {
+        console.log('Falta una de las imágenes.');
+      }
+    } catch (error) {
+      console.error('Error al enviar las imágenes:', error.message);
+    }
+  };
+  
 
   return (
     <View style={styles.container}>
-
       <View style={styles.containerLeft}>
-
         <View style={styles.imageContainer}>
-
-        {showImage && image && (
+          {showImage && image && (
             <View style={styles.imageWrapper}>
               <Text style={styles.imageLabel}>Primera Foto</Text>
               <Image source={{ uri: image }} style={styles.image} />
             </View>
           )}
-
         </View>
 
         <View style={styles.buttonContainer}>
-
           <TouchableOpacity
             style={styles.button}
-            onPress={() => {navigation.jumpTo('Camara');}}       
+            onPress={() => {
+              navigation.jumpTo('Camara');
+            }}
           >
-
             <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>
 
@@ -140,27 +186,24 @@ export default function Analisis({navigation, route}) {
             <Text style={styles.buttonText}>Borrar Imagen</Text>
           </TouchableOpacity>
         </View>
-
       </View>
 
-
       <View style={styles.containerRight}>
-
         <View style={styles.imageContainer}>
-        {showSecondImage && secondImage && (
-          <View style={styles.imageWrapper}>
-            <Text style={styles.imageLabel}>Segunda Foto</Text>
-            <Image source={{ uri: secondImage }} style={styles.image} />
-          </View>
-        )}
+          {showSecondImage && secondImage && (
+            <View style={styles.imageWrapper}>
+              <Text style={styles.imageLabel}>Segunda Foto</Text>
+              <Image source={{ uri: secondImage }} style={styles.image} />
+            </View>
+          )}
         </View>
-        
 
         <View style={styles.buttonContainer}>
-
           <TouchableOpacity
             style={styles.button}
-            onPress={() => {navigation.jumpTo('CamaraS');}}
+            onPress={() => {
+              navigation.jumpTo('CamaraS');
+            }}
           >
             <Text style={styles.buttonText}>Tomar Foto</Text>
           </TouchableOpacity>
@@ -180,40 +223,34 @@ export default function Analisis({navigation, route}) {
           >
             <Text style={styles.buttonText}>Borrar Imagen</Text>
           </TouchableOpacity>
-          
         </View>
-
       </View>
-
 
       <View style={styles.containerNavigation}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={null}
+        >
+          <Text style={styles.buttonText}>Historial</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={null}
-          >
-            <Text style={styles.buttonText}>Historial</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={null}
+        >
+          <Text style={styles.buttonText}>Ver PDF</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={null}
-          >
-            <Text style={styles.buttonText}>Ver PDF</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={null}
-          >
-            <Text style={styles.buttonText}>Guardar y Analizar</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleGuardarYAnalizar}
+        >
+          <Text style={styles.buttonText}>Guardar y Analizar</Text>
+        </TouchableOpacity>
       </View>
-
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
